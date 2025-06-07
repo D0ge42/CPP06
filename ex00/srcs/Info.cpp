@@ -6,6 +6,9 @@
 #include <string>
 #include "Info.hpp"
 
+static int is_sign(char c);
+static int is_special(const std::string &str);
+
 void Info::detectType(char *str)
 {
   if (str == NULL)
@@ -14,39 +17,35 @@ void Info::detectType(char *str)
   int i = 0;
   unsigned long int dot_idx = content.find_first_of('.');
 
-  if (dot_idx == std::string::npos && isdigit(str[i]) == true)
+  if (is_special(str) == true)
+    this->data_type = T_SPECIAL;
+  else if (dot_idx == std::string::npos)
   {
-    this->data_type = T_INT;
-    std::cout << "Int type" << std::endl;
+    if (isdigit(str[i]) == true or (is_sign(str[i]) and isdigit(str[i + 1]) == true))
+      this->data_type = T_INT;
+    else
+      this->data_type = T_CHAR;
   }
-  else if (dot_idx ==  std::string::npos && isdigit(str[i]) == false)
+  else if ((dot_idx && isdigit(str[i]) == true) or (dot_idx and is_sign(str[i]) and isdigit(str[i + 1]) == true))
   {
-    this->data_type = T_CHAR;
-    std::cout << "Char type" << std::endl;
-  }
-  else if (dot_idx && isdigit(str[i]) == true && str[content.size()- 1] == 'f')
-  {
-    this->data_type = T_FLOAT;
-    std::cout << "Float type" << std::endl;
-  }
-
-  else if (dot_idx && isdigit(str[i]) == true && str[content.length() - 1] != 'f')
-  {
-    this->data_type = T_DOUBLE;
-    std::cout << "Double type" << std::endl;
+    if (str[content.size() - 1] == 'f')
+      this->data_type = T_FLOAT;
+    else
+      this->data_type = T_DOUBLE;
   }
 }
 
 void Info::convertChar(const std::string &str)
 {
   char c = str[0];
+  std::cout << "char: ";
   if (isprint(c))
-  {
     std::cout << "'" << c << "'" << std::endl;
-    std::cout << "int: " << static_cast<int>(c) << std::endl;
-    std::cout << "double: " << static_cast<double>(c) << ".0"<< std::endl;
-    std::cout << "float: " << static_cast<float>(c) << ".0f"<< std::endl;
-  }
+  else
+    std::cout << "not displayable" << std::endl;
+  std::cout << "int: " << static_cast<int>(c) << std::endl;
+  std::cout << "double: " << static_cast<double>(c) << ".0"<< std::endl;
+  std::cout << "float: " << static_cast<float>(c) << ".0f"<< std::endl;
 }
 
 
@@ -97,6 +96,44 @@ void Info::convertDouble(const std::string &str)
   std::cout << "double: " << num << ".0" << std::endl;
 }
 
+static int is_special(const std::string &str)
+{
+  if (str == "nan" || str == "nanf" || str == "+inf" || str == "+inff" || str == "-inf" || str == "-inff")
+    return 1;
+  return 0;
+}
+
+void Info::convertSpecial(const std::string &str)
+{
+  if (str == "nan" || str == "nanf")
+	{
+		std::cout << "char: impossible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
+		std::cout << "float: nanf" << std::endl;
+		std::cout << "double: nan" << std::endl;
+	}
+  else if (str == "+inf" || str == "+inff")
+	{
+		std::cout << "char: impossible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
+		std::cout << "float: +inff" << std::endl;
+		std::cout << "double: +inf" << std::endl;
+	}
+  else if (str == "-inf" || str == "-inff")
+	{
+		std::cout << "char: impossible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
+		std::cout << "float: -inff" << std::endl;
+		std::cout << "double: -inf" << std::endl;
+	}
+}
+
+static int is_sign(char c)
+{
+  if (c == '+' || c == '-')
+    return 1;
+  return 0;
+}
 
 int Info::getDataType()
 {

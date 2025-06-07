@@ -8,6 +8,7 @@ typedef enum e_type
   T_CHAR = 1 << 2,
   T_FLOAT = 1 << 3,
   T_DOUBLE = 1 << 4,
+  T_SPECIAL = 1 << 5,
 } t_type;
 
 class Info
@@ -26,6 +27,7 @@ class Info
     void convertInt(const std::string &str);
     void convertFloat(const std::string &str);
     void convertDouble(const std::string &str);
+    void convertSpecial(const std::string &str);
 };
 
 #endif

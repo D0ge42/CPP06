@@ -12,7 +12,7 @@ void ScalarConverter::convert(char *str)
   info.detectType(str);
   content = str;
   int data_type = info.getDataType();
-
+  std::cout << data_type << std::endl;
   switch (data_type)
   {
     case T_CHAR:
@@ -24,9 +24,12 @@ void ScalarConverter::convert(char *str)
     case T_FLOAT:
       info.convertFloat(content);
       break;
-    // case T_DOUBLE:
-    //   info.convertDouble(content);
-    //   break;
+    case T_DOUBLE:
+      info.convertDouble(content);
+      break;
+    case T_SPECIAL:
+      info.convertSpecial(content);
+      break;
   }
 }
 
