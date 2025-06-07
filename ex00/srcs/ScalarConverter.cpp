@@ -1,6 +1,8 @@
 #include "ScalarConverter.hpp"
 #include "Info.hpp"
 #include <cctype>
+#include <iostream>
+#include <ostream>
 
 void ScalarConverter::convert(char *str)
 {
@@ -9,8 +11,9 @@ void ScalarConverter::convert(char *str)
 
   info.detectType(str);
   content = str;
+  int data_type = info.getDataType();
 
-  switch (info.getDataType())
+  switch (data_type)
   {
     case T_CHAR:
       info.convertChar(content);
@@ -18,12 +21,12 @@ void ScalarConverter::convert(char *str)
     case T_INT:
       info.convertInt(content);
       break;
-    case T_DOUBLE:
-      info.convertDouble(content);
-      break;
     case T_FLOAT:
       info.convertFloat(content);
       break;
+    // case T_DOUBLE:
+    //   info.convertDouble(content);
+    //   break;
   }
 }
 

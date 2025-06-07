@@ -1,7 +1,9 @@
+#include <iostream>
 #include <stdio.h>
 #include "ScalarConverter.hpp"
 
-int main()
+int main(int ac, char **av)
 {
-  return 0 ;
+  (void)ac;
+  ScalarConverter::convert(av[1]);
 }
