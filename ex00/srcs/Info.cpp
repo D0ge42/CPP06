@@ -5,9 +5,7 @@
 #include <ostream>
 #include <string>
 #include "Info.hpp"
-
-static int is_sign(char c);
-static int is_special(const std::string &str);
+#include "conversion_utils.h"
 
 void Info::detectType(char *str)
 {
@@ -44,8 +42,15 @@ void Info::convertChar(const std::string &str)
   else
     std::cout << "not displayable" << std::endl;
   std::cout << "int: " << static_cast<int>(c) << std::endl;
-  std::cout << "double: " << static_cast<double>(c) << ".0"<< std::endl;
-  std::cout << "float: " << static_cast<float>(c) << ".0f"<< std::endl;
+  if (is_there_dot(str) == true)
+    std::cout << "double: " << static_cast<double>(c) << ".0"<< std::endl;
+  else
+    std::cout << "double: " << static_cast<double>(c) << std::endl;
+  if (is_there_dot(str) == true)
+    std::cout << "float: " << static_cast<float>(c) << ".0f"<< std::endl;
+  else
+    std::cout << "double: " << static_cast<float>(c) << "f" << std::endl;
+
 }
 
 
@@ -77,31 +82,42 @@ void Info::convertFloat(const std::string &str)
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
-  std::cout << "float: " << num << "0.f" << std::endl;
-  std::cout << "int: " << num << std::endl;
-  std::cout << "double: " << num << ".0" << std::endl;
+  std::cout << "float: " << num << ".0f" << std::endl;
+  std::cout << "int: " << static_cast<int>(num) << std::endl;
+  if (num < -2147483648)
+    std::cout << "conversion not possible, intenger underflow" << std::endl;
+  else if (num > 2147483648)
+    std::cout << "conversion not possible, intenger overflow" << std::endl;
+  else
+    std::cout << num << std::endl;
+  std::cout << "double: " << static_cast<double>(num) << ".0" << std::endl;
 }
 
 void Info::convertDouble(const std::string &str)
 {
   const char *cstring = str.c_str();
-  float num = std::atof(cstring);
+  double num = std::atof(cstring);
   std::cout << "char: ";
   if (num > 0 && num < 127)
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
-  std::cout << "float: " << num << "0.f" << std::endl;
-  std::cout << "int: " << num << std::endl;
-  std::cout << "double: " << num << ".0" << std::endl;
+  if (num < -2147483648)
+    std::cout << "conversion not possible, intenger underflow" << std::endl;
+  else if (num > 2147483647)
+    std::cout << "conversion not possible, intenger overflow" << std::endl;
+  else
+    std::cout << num << std::endl;
+  if (is_there_dot(str) == true)
+    std::cout << "double: " << static_cast<double>(num) << std::endl;
+  else
+    std::cout << "double: " << static_cast<double>(num) << ".0f" <<  std::endl;
+  if (is_there_dot(str) == true)
+    std::cout << "float: " << static_cast<float>(num) << "f"<< std::endl;
+  else
+    std::cout << "float: " << static_cast<float>(num) << ".0f" << std::endl;
 }
 
-static int is_special(const std::string &str)
-{
-  if (str == "nan" || str == "nanf" || str == "+inf" || str == "+inff" || str == "-inf" || str == "-inff")
-    return 1;
-  return 0;
-}
 
 void Info::convertSpecial(const std::string &str)
 {
@@ -126,13 +142,6 @@ void Info::convertSpecial(const std::string &str)
 		std::cout << "float: -inff" << std::endl;
 		std::cout << "double: -inf" << std::endl;
 	}
-}
-
-static int is_sign(char c)
-{
-  if (c == '+' || c == '-')
-    return 1;
-  return 0;
 }
 
 int Info::getDataType()

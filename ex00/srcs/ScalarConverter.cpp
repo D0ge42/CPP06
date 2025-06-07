@@ -30,6 +30,8 @@ void ScalarConverter::convert(char *str)
     case T_SPECIAL:
       info.convertSpecial(content);
       break;
+    default:
+      std::cout << "invalid conversion" << std::endl;
   }
 }
 
