@@ -1,11 +1,27 @@
 #include <cctype>
 #include <cstddef>
+#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <ostream>
 #include <string>
 #include "Info.hpp"
-#include "conversion_utils.h"
+#include "utils.h"
+
+void Info::inputParser(const std::string &str)
+{
+  const char *to_check = str.c_str();
+  if (is_sign(*to_check) && isdigit(*(to_check + 1)) == false)
+  {
+    std::cerr << "Conversion not valid" << std::endl;
+    exit(1);
+  }
+  if (str.length() > 1 && isAlphaString(str) == true)
+  {
+    std::cerr << "Conversion not valid" << std::endl;
+    exit(1);
+  }
+}
 
 void Info::detectType(char *str)
 {
@@ -33,6 +49,7 @@ void Info::detectType(char *str)
   }
 }
 
+
 void Info::convertChar(const std::string &str)
 {
   char c = str[0];
@@ -50,12 +67,21 @@ void Info::convertChar(const std::string &str)
     std::cout << "float: " << static_cast<float>(c) << ".0f"<< std::endl;
   else
     std::cout << "double: " << static_cast<float>(c) << "f" << std::endl;
-
 }
 
 
 void Info::convertInt(const std::string &str)
 {
+  if (isStringAlphaNum(str) == true)
+  {
+    std::cerr << "Conversion is invalid. Num should only contain digits, dot or sign" << std::endl;
+    exit(1);
+  }
+  if (signCount(str) > 1)
+  {
+    std::cerr << "Conversion is invalid. Too many signs" << std::endl;
+    exit(1);
+  }
   long long num = std::atoll(str.c_str());
   std::cout << "int: ";
   if (num < -2147483648)
@@ -75,6 +101,21 @@ void Info::convertInt(const std::string &str)
 
 void Info::convertFloat(const std::string &str)
 {
+  if (isStringAlphaNum(str) == true)
+  {
+    std::cerr << "Conversion is invalid. Num should only contain digits, dot or sign" << std::endl;
+    exit(1);
+  }
+  if (signCount(str) > 1)
+  {
+    std::cerr << "Conversion is invalid. Too many signs" << std::endl;
+    exit(1);
+  }
+  if (dotCount(str) > 1)
+  {
+    std::cerr << "Invalid conversion\n, too many dots" << std::endl;
+    exit(1);
+  }
   const char *cstring = str.c_str();
   float num = std::atof(cstring);
   std::cout << "char: ";
@@ -83,18 +124,33 @@ void Info::convertFloat(const std::string &str)
   else
     std::cout << "not representable" << std::endl;
   std::cout << "float: " << num << ".0f" << std::endl;
-  std::cout << "int: " << static_cast<int>(num) << std::endl;
+  std::cout << "int: ";
   if (num < -2147483648)
     std::cout << "conversion not possible, intenger underflow" << std::endl;
   else if (num > 2147483648)
     std::cout << "conversion not possible, intenger overflow" << std::endl;
   else
-    std::cout << num << std::endl;
+    std::cout << static_cast<int>(num) << std::endl;
   std::cout << "double: " << static_cast<double>(num) << ".0" << std::endl;
 }
 
 void Info::convertDouble(const std::string &str)
 {
+  if (isStringAlphaNum(str) == true)
+  {
+    std::cerr << "Conversion is invalid. Num should only contain digits, dot or sign" << std::endl;
+    exit(1);
+  }
+  if (signCount(str) > 1)
+  {
+    std::cerr << "Conversion is invalid. Too many signs" << std::endl;
+    exit(1);
+  }
+  if (dotCount(str) > 1)
+  {
+    std::cerr << "Invalid conversion, too many dots" << std::endl;
+    exit(1);
+  }
   const char *cstring = str.c_str();
   double num = std::atof(cstring);
   std::cout << "char: ";
@@ -102,10 +158,11 @@ void Info::convertDouble(const std::string &str)
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
+  std::cout << "int: ";
   if (num < -2147483648)
-    std::cout << "conversion not possible, intenger underflow" << std::endl;
+    std::cerr << "conversion not possible, intenger underflow" << std::endl;
   else if (num > 2147483647)
-    std::cout << "conversion not possible, intenger overflow" << std::endl;
+    std::cerr << "conversion not possible, intenger overflow" << std::endl;
   else
     std::cout << num << std::endl;
   if (is_there_dot(str) == true)
@@ -123,24 +180,24 @@ void Info::convertSpecial(const std::string &str)
 {
   if (str == "nan" || str == "nanf")
 	{
-		std::cout << "char: impossible" << std::endl;
-		std::cout << "int: impossible" << std::endl;
-		std::cout << "float: nanf" << std::endl;
-		std::cout << "double: nan" << std::endl;
+		std::cerr << "char: impossible" << std::endl;
+		std::cerr << "int: impossible" << std::endl;
+		std::cerr << "float: nanf" << std::endl;
+		std::cerr << "double: nan" << std::endl;
 	}
   else if (str == "+inf" || str == "+inff")
 	{
-		std::cout << "char: impossible" << std::endl;
-		std::cout << "int: impossible" << std::endl;
-		std::cout << "float: +inff" << std::endl;
-		std::cout << "double: +inf" << std::endl;
+		std::cerr << "char: impossible" << std::endl;
+		std::cerr << "int: impossible" << std::endl;
+		std::cerr << "float: +inff" << std::endl;
+		std::cerr << "double: +inf" << std::endl;
 	}
   else if (str == "-inf" || str == "-inff")
 	{
-		std::cout << "char: impossible" << std::endl;
-		std::cout << "int: impossible" << std::endl;
-		std::cout << "float: -inff" << std::endl;
-		std::cout << "double: -inf" << std::endl;
+		std::cerr << "char: impossible" << std::endl;
+		std::cerr << "int: impossible" << std::endl;
+		std::cerr << "float: -inff" << std::endl;
+		std::cerr << "double: -inf" << std::endl;
 	}
 }
 

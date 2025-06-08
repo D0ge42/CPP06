@@ -28,6 +28,7 @@ class Info
     void convertFloat(const std::string &str);
     void convertDouble(const std::string &str);
     void convertSpecial(const std::string &str);
+    void inputParser(const std::string &str);
 };
 
 #endif

@@ -12,7 +12,6 @@ void ScalarConverter::convert(char *str)
   info.detectType(str);
   content = str;
   int data_type = info.getDataType();
-  std::cout << data_type << std::endl;
   switch (data_type)
   {
     case T_CHAR:
