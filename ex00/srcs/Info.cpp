@@ -123,7 +123,14 @@ void Info::convertFloat(const std::string &str)
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
-  std::cout << "float: " << num << ".0f" << std::endl;
+  if (is_there_dot(str) == true)
+    std::cout << "double: " << static_cast<double>(num) << std::endl;
+  else
+    std::cout << "double: " << static_cast<double>(num) << ".0f" <<  std::endl;
+  if (is_there_dot(str) == true)
+    std::cout << "float: " << static_cast<float>(num) << "f"<< std::endl;
+  else
+    std::cout << "float: " << static_cast<float>(num) << ".0f" << std::endl;
   std::cout << "int: ";
   if (num < -2147483648)
     std::cout << "conversion not possible, intenger underflow" << std::endl;
@@ -131,7 +138,6 @@ void Info::convertFloat(const std::string &str)
     std::cout << "conversion not possible, intenger overflow" << std::endl;
   else
     std::cout << static_cast<int>(num) << std::endl;
-  std::cout << "double: " << static_cast<double>(num) << ".0" << std::endl;
 }
 
 void Info::convertDouble(const std::string &str)
