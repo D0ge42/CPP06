@@ -80,3 +80,10 @@ int isStringAlphaNum(const std::string &str)
   }
   return 0;
 }
+
+int isScientificNotation(long long num)
+{
+  if (num > 999999)
+    return 1;
+  return 0;
+}

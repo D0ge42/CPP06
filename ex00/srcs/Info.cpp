@@ -51,7 +51,7 @@ void Info::convertChar(const std::string &str)
   }
   char c = str[0];
   std::cout << "char: ";
-  if (isprint(c))
+  if (isScientificNotation(c) == false && isprint(c))
     std::cout << "'" << c << "'" << std::endl;
   else
     std::cout << "not displayable" << std::endl;
@@ -83,12 +83,12 @@ void Info::convertInt(const std::string &str)
   std::cout << "int: ";
   if (num < -2147483648)
     std::cout << "conversion not possible, integer underflow" << std::endl;
-  else if (num > 2147483647)
+  else if (num > 2147483648)
     std::cout << "conversion not possible, integer overflow" << std::endl;
   else
     std::cout << num << std::endl;
   std::cout << "char: ";
-  if (isprint(num))
+  if (isScientificNotation(num) == false && isprint(num))
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
@@ -116,7 +116,7 @@ void Info::convertFloat(const std::string &str)
   const char *cstring = str.c_str();
   float num = std::atof(cstring);
   std::cout << "char: ";
-  if (isprint(num))
+  if (isScientificNotation(num) == false && isprint(num))
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
@@ -157,7 +157,7 @@ void Info::convertDouble(const std::string &str)
   const char *cstring = str.c_str();
   double num = std::atof(cstring);
   std::cout << "char: ";
-  if (isprint(num))
+  if (isScientificNotation(num) == false && isprint(num))
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
@@ -173,7 +173,7 @@ void Info::convertDouble(const std::string &str)
   else
     std::cout << "double: " << static_cast<double>(num) << ".0f" <<  std::endl;
   if (is_there_dot(str) == true)
-    std::cout << "float: " << static_cast<float>(num) << "f"<< std::endl;
+      std::cout << "float: " << static_cast<float>(num) << "f"<< std::endl;
   else
     std::cout << "float: " << static_cast<float>(num) << ".0f" << std::endl;
 }
