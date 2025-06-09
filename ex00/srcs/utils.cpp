@@ -1,12 +1,8 @@
 #include "utils.h"
-#include <algorithm>
 #include <cctype>
 #include <cstddef>
 #include <cstdlib>
-#include <iostream>
-#include <ostream>
 #include <string>
-#include "Info.hpp"
 
 int is_special(const std::string &str)
 {

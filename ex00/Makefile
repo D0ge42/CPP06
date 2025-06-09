@@ -9,7 +9,7 @@ OBJ_DIR = objs
 SRC = srcs/main.cpp \
 			srcs/ScalarConverter.cpp\
 			srcs/Info.cpp \
-			srcs/utils.cpp
+			srcs/utils.cpp \
 
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
