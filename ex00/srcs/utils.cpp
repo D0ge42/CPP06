@@ -2,6 +2,7 @@
 #include <cctype>
 #include <cstddef>
 #include <cstdlib>
+#include <limits>
 #include <string>
 
 int is_special(const std::string &str)
@@ -81,9 +82,27 @@ int isStringAlphaNum(const std::string &str)
   return 0;
 }
 
-int isScientificNotation(long long num)
+int isScientificNotation(long double num)
 {
   if (num > 999999)
+    return 1;
+  return 0;
+}
+
+int check_float_overflow(long double num)
+{
+  if (num > std::numeric_limits<float>::max())
+    return (1);
+  if (num < std::numeric_limits<float>::min())
+    return (1);
+  return 0;
+}
+
+int check_double_overflow(long double num)
+{
+  if (num > std::numeric_limits<double>::max())
+    return 1;
+  if (num < std::numeric_limits<double>::min())
     return 1;
   return 0;
 }

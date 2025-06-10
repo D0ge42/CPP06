@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <ostream>
 #include <string>
 #include "Info.hpp"
@@ -79,7 +80,7 @@ void Info::convertInt(const std::string &str)
     std::cerr << "Conversion is invalid. Too many signs" << std::endl;
     exit(1);
   }
-  long long num = std::atoll(str.c_str());
+  long double num = std::strtold(str.c_str(),NULL);
   std::cout << "int: ";
   if (num < -2147483648)
     std::cout << "conversion not possible, integer underflow" << std::endl;
@@ -92,8 +93,14 @@ void Info::convertInt(const std::string &str)
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
-  std::cout << "double: " << static_cast<double>(num) << ".0"<< std::endl;
-  std::cout << "float: " << static_cast<float>(num) << ".0f"<< std::endl;
+  if (check_double_overflow(num) == true)
+    std::cerr << "double: conversion not possible, double underflow/overflow" << std::endl;
+  else
+    std::cout << "double: " << static_cast<double>(num) << ".0"<< std::endl;
+  if (check_float_overflow(num) == true)
+    std::cerr << "float: conversion not possible, float underflow/overflow" << std::endl;
+  else
+    std::cout << "float: " << static_cast<float>(num) << ".0f"<< std::endl;
 }
 
 void Info::convertFloat(const std::string &str)
@@ -113,18 +120,21 @@ void Info::convertFloat(const std::string &str)
     std::cerr << "Invalid conversion\n, too many dots" << std::endl;
     exit(1);
   }
-  const char *cstring = str.c_str();
-  float num = std::atof(cstring);
+  long double num = std::strtold(str.c_str(),NULL);
   std::cout << "char: ";
   if (isScientificNotation(num) == false && isprint(num))
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
-  if (is_there_dot(str) == true)
+  if (check_double_overflow(num) == true)
+    std::cerr << "double: conversion not possible, double underflow/overflow";
+  else if (is_there_dot(str) == true)
     std::cout << "double: " << static_cast<double>(num) << std::endl;
   else
     std::cout << "double: " << static_cast<double>(num) << ".0f" <<  std::endl;
-  if (is_there_dot(str) == true)
+  if (check_float_overflow(num) == true)
+    std::cerr << "float: conversion not possible, float underflow/overflow";
+  else if (is_there_dot(str) == true)
     std::cout << "float: " << static_cast<float>(num) << "f"<< std::endl;
   else
     std::cout << "float: " << static_cast<float>(num) << ".0f" << std::endl;
@@ -154,8 +164,7 @@ void Info::convertDouble(const std::string &str)
     std::cerr << "Invalid conversion, too many dots" << std::endl;
     exit(1);
   }
-  const char *cstring = str.c_str();
-  double num = std::atof(cstring);
+  long double num = std::strtold(str.c_str(),NULL);
   std::cout << "char: ";
   if (isScientificNotation(num) == false && isprint(num))
     std::cout << static_cast<char>(num) << std::endl;
@@ -168,11 +177,15 @@ void Info::convertDouble(const std::string &str)
     std::cerr << "conversion not possible, integer overflow" << std::endl;
   else
     std::cout << num << std::endl;
-  if (is_there_dot(str) == true)
+  if (check_double_overflow(num) == true)
+    std::cerr << "conversion not possible, double overflow/underflow" << std::endl;
+  else if (is_there_dot(str) == true)
     std::cout << "double: " << static_cast<double>(num) << std::endl;
   else
     std::cout << "double: " << static_cast<double>(num) << ".0f" <<  std::endl;
-  if (is_there_dot(str) == true)
+  if (check_float_overflow(num) == true)
+    std::cerr << "conversion not possible, float overflow/underflow" << std::endl;
+  else if (is_there_dot(str) == true)
       std::cout << "float: " << static_cast<float>(num) << "f"<< std::endl;
   else
     std::cout << "float: " << static_cast<float>(num) << ".0f" << std::endl;
