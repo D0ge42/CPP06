@@ -3,10 +3,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
-#include <limits>
 #include <ostream>
 #include <string>
 #include "Info.hpp"
+#include "checks.hpp"
 #include "utils.h"
 
 
@@ -39,17 +39,7 @@ void Info::detectType(char *str)
 
 void Info::convertChar(const std::string &str)
 {
-  const char *to_check = str.c_str();
-  if (is_sign(*to_check) && isdigit(*(to_check + 1)) == false)
-  {
-    std::cerr << "Conversion not valid" << std::endl;
-    exit(1);
-  }
-  if (str.length() > 1 && isAlphaString(str) == true)
-  {
-    std::cerr << "Conversion not valid" << std::endl;
-    exit(1);
-  }
+  parseChar(str);
   char c = str[0];
   std::cout << "char: ";
   if (isScientificNotation(c) == false && isprint(c))
@@ -70,34 +60,23 @@ void Info::convertChar(const std::string &str)
 
 void Info::convertInt(const std::string &str)
 {
-  if (isStringAlphaNum(str) == true)
-  {
-    std::cerr << "Conversion is invalid. Num should only contain digits, dot or sign" << std::endl;
-    exit(1);
-  }
-  if (signCount(str) > 1)
-  {
-    std::cerr << "Conversion is invalid. Too many signs" << std::endl;
-    exit(1);
-  }
+  parseInt(str);
   long double num = std::strtold(str.c_str(),NULL);
   std::cout << "int: ";
-  if (num < -2147483648)
-    std::cout << "conversion not possible, integer underflow" << std::endl;
-  else if (num > 2147483648)
-    std::cout << "conversion not possible, integer overflow" << std::endl;
+  if (check_int_limits(num) == true)
+    std::cerr << "conversion not possible, integer overflow/underflow" << std::endl;
   else
-    std::cout << num << std::endl;
+    std::cout << static_cast<int>(num) << std::endl;
   std::cout << "char: ";
   if (isScientificNotation(num) == false && isprint(num))
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
-  if (check_double_overflow(num) == true)
+  if (check_double_limits(num) == true)
     std::cerr << "double: conversion not possible, double underflow/overflow" << std::endl;
   else
     std::cout << "double: " << static_cast<double>(num) << ".0"<< std::endl;
-  if (check_float_overflow(num) == true)
+  if (check_float_limits(num) == true)
     std::cerr << "float: conversion not possible, float underflow/overflow" << std::endl;
   else
     std::cout << "float: " << static_cast<float>(num) << ".0f"<< std::endl;
@@ -105,65 +84,35 @@ void Info::convertInt(const std::string &str)
 
 void Info::convertFloat(const std::string &str)
 {
-  if (isStringAlphaNum(str) == true)
-  {
-    std::cerr << "Conversion is invalid. Num should only contain digits, dot or sign" << std::endl;
-    exit(1);
-  }
-  if (signCount(str) > 1)
-  {
-    std::cerr << "Conversion is invalid. Too many signs" << std::endl;
-    exit(1);
-  }
-  if (dotCount(str) > 1)
-  {
-    std::cerr << "Invalid conversion\n, too many dots" << std::endl;
-    exit(1);
-  }
+  parseFloatOrDouble(str);
   long double num = std::strtold(str.c_str(),NULL);
   std::cout << "char: ";
   if (isScientificNotation(num) == false && isprint(num))
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
-  if (check_double_overflow(num) == true)
+  if (check_double_limits(num) == true)
     std::cerr << "double: conversion not possible, double underflow/overflow";
   else if (is_there_dot(str) == true)
     std::cout << "double: " << static_cast<double>(num) << std::endl;
   else
     std::cout << "double: " << static_cast<double>(num) << ".0f" <<  std::endl;
-  if (check_float_overflow(num) == true)
+  if (check_float_limits(num) == true)
     std::cerr << "float: conversion not possible, float underflow/overflow";
   else if (is_there_dot(str) == true)
     std::cout << "float: " << static_cast<float>(num) << "f"<< std::endl;
   else
     std::cout << "float: " << static_cast<float>(num) << ".0f" << std::endl;
   std::cout << "int: ";
-  if (num < -2147483648)
-    std::cout << "conversion not possible, integer underflow" << std::endl;
-  else if (num > 2147483648)
-    std::cout << "conversion not possible, integer overflow" << std::endl;
+  if (check_int_limits(num) == true)
+    std::cerr << "conversion not possible, integer overflow/underflow" << std::endl;
   else
     std::cout << static_cast<int>(num) << std::endl;
 }
 
 void Info::convertDouble(const std::string &str)
 {
-  if (isStringAlphaNum(str) == true)
-  {
-    std::cerr << "Conversion is invalid. Num should only contain digits, dot or sign" << std::endl;
-    exit(1);
-  }
-  if (signCount(str) > 1)
-  {
-    std::cerr << "Conversion is invalid. Too many signs" << std::endl;
-    exit(1);
-  }
-  if (dotCount(str) > 1)
-  {
-    std::cerr << "Invalid conversion, too many dots" << std::endl;
-    exit(1);
-  }
+  parseFloatOrDouble(str);
   long double num = std::strtold(str.c_str(),NULL);
   std::cout << "char: ";
   if (isScientificNotation(num) == false && isprint(num))
@@ -171,19 +120,17 @@ void Info::convertDouble(const std::string &str)
   else
     std::cout << "not representable" << std::endl;
   std::cout << "int: ";
-  if (num < -2147483648)
-    std::cerr << "conversion not possible, integer underflow" << std::endl;
-  else if (num > 2147483647)
-    std::cerr << "conversion not possible, integer overflow" << std::endl;
+  if (check_int_limits(num) == true)
+    std::cerr << "conversion not possible, integer overflow/underflow" << std::endl;
   else
-    std::cout << num << std::endl;
-  if (check_double_overflow(num) == true)
+    std::cout << static_cast<int>(num) << std::endl;
+  if (check_double_limits(num) == true)
     std::cerr << "conversion not possible, double overflow/underflow" << std::endl;
   else if (is_there_dot(str) == true)
     std::cout << "double: " << static_cast<double>(num) << std::endl;
   else
     std::cout << "double: " << static_cast<double>(num) << ".0f" <<  std::endl;
-  if (check_float_overflow(num) == true)
+  if (check_float_limits(num) == true)
     std::cerr << "conversion not possible, float overflow/underflow" << std::endl;
   else if (is_there_dot(str) == true)
       std::cout << "float: " << static_cast<float>(num) << "f"<< std::endl;

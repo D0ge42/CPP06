@@ -84,12 +84,21 @@ int isStringAlphaNum(const std::string &str)
 
 int isScientificNotation(long double num)
 {
-  if (num > 999999)
+  if (num > 999999 || num < 999999)
     return 1;
   return 0;
 }
 
-int check_float_overflow(long double num)
+int check_int_limits(long double num)
+{
+  if (num > std::numeric_limits<int>::max())
+    return 1;
+  if (num < std::numeric_limits<int>::min())
+    return 1;
+  return 0;
+}
+
+int check_float_limits(long double num)
 {
   if (num > std::numeric_limits<float>::max())
     return (1);
@@ -98,7 +107,7 @@ int check_float_overflow(long double num)
   return 0;
 }
 
-int check_double_overflow(long double num)
+int check_double_limits(long double num)
 {
   if (num > std::numeric_limits<double>::max())
     return 1;

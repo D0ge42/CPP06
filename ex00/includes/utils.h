@@ -11,8 +11,8 @@ int isScientificNotation(long double num);
 int dotCount(const std::string &str);
 int signCount(const std::string &str);
 int isStringAlphaNum(const std::string &str);
-int check_float_overflow(long double num);
-int check_double_overflow(long double num);
-
+int check_float_limits(long double num);
+int check_double_limits(long double num);
+int check_int_limits(long double num);
 
 #endif // !UTILS
