@@ -1,6 +1,8 @@
 #include "utils.h"
 #include <cctype>
+#include <cfloat>
 #include <cstddef>
+#include <cstdio>
 #include <cstdlib>
 #include <limits>
 #include <string>
@@ -25,6 +27,8 @@ int is_there_dot(const std::string &str)
   size_t dot_idx = str.find_first_of('.');
   if (dot_idx == std::string::npos)
     return 0;
+  if (std::strtold(str.c_str(),NULL) == 0)
+    return 1;
   return 1;
 }
 
@@ -70,8 +74,13 @@ int isStringAlphaNum(const std::string &str)
 {
   const char *to_check = str.c_str();
   int i = 0;
+  size_t f_count = 0;
   while(to_check[i])
   {
+    if (to_check[i] == 'f')
+      f_count++;
+    if (f_count > 1)
+      return 1;
     if (to_check[i] != 'f'
         && std::isalpha(to_check[i])
         && is_sign(to_check[i]) == false
@@ -82,12 +91,6 @@ int isStringAlphaNum(const std::string &str)
   return 0;
 }
 
-int isScientificNotation(long double num)
-{
-  if (num > 999999 || num < 999999)
-    return 1;
-  return 0;
-}
 
 int check_int_limits(long double num)
 {
@@ -102,7 +105,7 @@ int check_float_limits(long double num)
 {
   if (num > std::numeric_limits<float>::max())
     return (1);
-  if (num < std::numeric_limits<float>::min())
+  if (num < -FLT_MAX)
     return (1);
   return 0;
 }
@@ -111,7 +114,7 @@ int check_double_limits(long double num)
 {
   if (num > std::numeric_limits<double>::max())
     return 1;
-  if (num < std::numeric_limits<double>::min())
+  if (num < -DBL_MAX)
     return 1;
   return 0;
 }

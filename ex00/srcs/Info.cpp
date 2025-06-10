@@ -42,19 +42,13 @@ void Info::convertChar(const std::string &str)
   parseChar(str);
   char c = str[0];
   std::cout << "char: ";
-  if (isScientificNotation(c) == false && isprint(c))
+  if (c >= 32 && c < 127)
     std::cout << "'" << c << "'" << std::endl;
   else
     std::cout << "not displayable" << std::endl;
   std::cout << "int: " << static_cast<int>(c) << std::endl;
-  if (is_there_dot(str) == true)
-    std::cout << "double: " << static_cast<double>(c) << ".0"<< std::endl;
-  else
-    std::cout << "double: " << static_cast<double>(c) << std::endl;
-  if (is_there_dot(str) == true)
-    std::cout << "float: " << static_cast<float>(c) << ".0f"<< std::endl;
-  else
-    std::cout << "float: " << static_cast<float>(c) << "f" << std::endl;
+  std::cout << "double: " << static_cast<double>(c) << ".0"<< std::endl;
+  std::cout << "float: " << static_cast<float>(c) << ".0f"<< std::endl;
 }
 
 
@@ -62,47 +56,63 @@ void Info::convertInt(const std::string &str)
 {
   parseInt(str);
   long double num = std::strtold(str.c_str(),NULL);
+  bool dotZeroFlag = (static_cast<int>(num) == num && num < 1e6 && (num > 1e-5 || num == 0));
   std::cout << "int: ";
   if (check_int_limits(num) == true)
     std::cerr << "conversion not possible, integer overflow/underflow" << std::endl;
   else
     std::cout << static_cast<int>(num) << std::endl;
   std::cout << "char: ";
-  if (isScientificNotation(num) == false && isprint(num))
+  if (num < 0 || num > 127)
+    std::cerr << "conversion not possible: char overflow/underflow" << std::endl;
+  else if (num >= 32 && num < 127)
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
   if (check_double_limits(num) == true)
     std::cerr << "double: conversion not possible, double underflow/overflow" << std::endl;
   else
-    std::cout << "double: " << static_cast<double>(num) << ".0"<< std::endl;
+  {
+    if (dotZeroFlag == true)
+      std::cout << "double: " << static_cast<double>(num) << ".0"<< std::endl;
+    else
+      std::cout << "double: " << static_cast<double>(num) << std::endl;
+  }
   if (check_float_limits(num) == true)
     std::cerr << "float: conversion not possible, float underflow/overflow" << std::endl;
   else
-    std::cout << "float: " << static_cast<float>(num) << ".0f"<< std::endl;
+  {
+    if (dotZeroFlag == true)
+      std::cout << "float: " << static_cast<float>(num) << ".0f"<< std::endl;
+    else
+      std::cout << "float: " << static_cast<float>(num) << "f" << std::endl;
+  }
 }
 
 void Info::convertFloat(const std::string &str)
 {
   parseFloatOrDouble(str);
   long double num = std::strtold(str.c_str(),NULL);
+  bool dotZeroFlag = (static_cast<int>(num) == num && num < 1e6 && (num > 1e-5 || num == 0));
   std::cout << "char: ";
-  if (isScientificNotation(num) == false && isprint(num))
+  if (num < 0 || num > 127)
+    std::cerr << "conversion not possible: char overflow/underflow" << std::endl;
+  else if (num >= 32 && num < 127)
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
   if (check_double_limits(num) == true)
     std::cerr << "double: conversion not possible, double underflow/overflow";
-  else if (is_there_dot(str) == true)
+  else if (dotZeroFlag == false)
     std::cout << "double: " << static_cast<double>(num) << std::endl;
   else
-    std::cout << "double: " << static_cast<double>(num) << ".0f" <<  std::endl;
+      std::cout << "double: " << static_cast<double>(num) << ".0" <<  std::endl;
   if (check_float_limits(num) == true)
     std::cerr << "float: conversion not possible, float underflow/overflow";
-  else if (is_there_dot(str) == true)
+  else if (dotZeroFlag == false)
     std::cout << "float: " << static_cast<float>(num) << "f"<< std::endl;
   else
-    std::cout << "float: " << static_cast<float>(num) << ".0f" << std::endl;
+      std::cout << "float: " << static_cast<float>(num) << ".0f" << std::endl;
   std::cout << "int: ";
   if (check_int_limits(num) == true)
     std::cerr << "conversion not possible, integer overflow/underflow" << std::endl;
@@ -114,8 +124,11 @@ void Info::convertDouble(const std::string &str)
 {
   parseFloatOrDouble(str);
   long double num = std::strtold(str.c_str(),NULL);
+  bool dotZeroFlag = (static_cast<int>(num) == num && num < 1e6 && (num > 1e-5 || num == 0));
   std::cout << "char: ";
-  if (isScientificNotation(num) == false && isprint(num))
+  if (num < 0 || num > 127)
+    std::cerr << "conversion not possible: char overflow/underflow" << std::endl;
+  else if (num >= 32 && num < 127)
     std::cout << static_cast<char>(num) << std::endl;
   else
     std::cout << "not representable" << std::endl;
@@ -126,16 +139,16 @@ void Info::convertDouble(const std::string &str)
     std::cout << static_cast<int>(num) << std::endl;
   if (check_double_limits(num) == true)
     std::cerr << "conversion not possible, double overflow/underflow" << std::endl;
-  else if (is_there_dot(str) == true)
-    std::cout << "double: " << static_cast<double>(num) << std::endl;
+  else if (dotZeroFlag == true)
+      std::cout << "double: " << static_cast<double>(num) << ".0" <<  std::endl;
   else
-    std::cout << "double: " << static_cast<double>(num) << ".0f" <<  std::endl;
+    std::cout << "double: " << static_cast<double>(num) << std::endl;
   if (check_float_limits(num) == true)
     std::cerr << "conversion not possible, float overflow/underflow" << std::endl;
-  else if (is_there_dot(str) == true)
+  else if (dotZeroFlag == false)
       std::cout << "float: " << static_cast<float>(num) << "f"<< std::endl;
   else
-    std::cout << "float: " << static_cast<float>(num) << ".0f" << std::endl;
+      std::cout << "float: " << static_cast<float>(num) << ".0f" << std::endl;
 }
 
 
