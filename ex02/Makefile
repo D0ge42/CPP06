@@ -8,6 +8,9 @@ OBJ_DIR = objs
 
 SRC = srcs/Base.cpp \
 	  srcs/main.cpp \
+	  srcs/A.cpp \
+	  srcs/B.cpp \
+	  srcs/C.cpp \
 
 OBJ = $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 

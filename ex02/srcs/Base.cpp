@@ -1,4 +1,5 @@
 #include "Base.hpp"
+#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <stddef.h>
@@ -10,11 +11,11 @@ Base *Base::generate()
 {
   srand(time(NULL));
   int coinFlip = rand() % 3;
-  if (coinFlip == 1)
+  if (coinFlip == 0)
     return new A();
   if (coinFlip == 1)
     return new B();
-  if (coinFlip == 1)
+  if (coinFlip == 2)
     return new C();
   return NULL;
 }
@@ -37,4 +38,9 @@ void Base::identify(Base &p)
     std::cout << "B" << std::endl;
   else if (dynamic_cast<C*>(&p))
     std::cout << "C" << std::endl;
+}
+
+Base::~Base()
+{
+
 }
